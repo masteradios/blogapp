@@ -8,9 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,13 +28,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> invalidMethod(MethodArgumentNotValidException ex){
+    public ResponseEntity<?> invalidMethod(MethodArgumentNotValidException ex) {
 
-        Map<String,Object> map=new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         List<String> errorMessage = ex.getBindingResult().getAllErrors().stream().map((err) -> err.getDefaultMessage()).toList();
 
-        return new ResponseEntity<>(errorMessage,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<?> handleConstraintViolation(ConstraintViolationException ex) {
 
@@ -46,22 +47,35 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
         return new ResponseEntity<>("Runtime Exception: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(AmazonClientException.class)
-    public ResponseEntity<String> handleAwsException(AmazonClientException ex){
+    public ResponseEntity<String> handleAwsException(AmazonClientException ex) {
         return new ResponseEntity<>("Runtime Exception: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ApiResponse> handleAuthException(AuthenticationException ex){
+    public ResponseEntity<ApiResponse> handleAuthException(AuthenticationException ex) {
         ApiResponse apiResponse = new ApiResponse(ex.getMessage(), false);
 
-        return new ResponseEntity<ApiResponse>(apiResponse,HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.FORBIDDEN);
 
     }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ApiResponse> handleMissingParams(MissingServletRequestParameterException ex) {
+
+
+        String paramName = ex.getParameterName(); // The name of the missing parameter
+        String errorMessage = "Required request parameter '" + paramName + "' is missing.";
+        ApiResponse apiResponse = new ApiResponse(errorMessage, false);
+        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
 }
