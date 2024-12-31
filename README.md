@@ -144,7 +144,7 @@ The project uses the following dependencies for its core functionality:
 			<scope>runtime</scope>
 		</dependency>
 
-```xml
+```
 
 ### Prerequisites
 - **Java 17+**  
