@@ -150,7 +150,7 @@ The project uses the following dependencies for its core functionality:
 ### Prerequisites
 - **Java 17+**  
 - **PostgreSQL**  
-- **AWS S3 Account**
+- **AWS Account**
 
 
 
