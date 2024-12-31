@@ -145,6 +145,7 @@ The project uses the following dependencies for its core functionality:
 		</dependency>
 
 ```
+---
 
 ### Prerequisites
 - **Java 17+**  
